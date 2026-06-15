@@ -16,11 +16,14 @@ This repository is designed to make embedded programming easier, faster, and mor
 ## 📚 Libraries Included
 Here’s the list of libraries currently available in this repository:
 
-- **CommandLib** – Lightweight command parser and controller for Arduino.
+- **CommandController** – Lightweight command parser and controller for Arduino.
 - **IRRemote** – Simple Infrared Remote Controller.
 - **RTCLite** – Lightweight non-blocking DS3231 RTC wrapper.
 - **RTOSLite** – Lightweight RTOS-like cooperative scheduler for Arduino and ESP32.
 - **ToneLite** – Non-blocking tone player for Arduino and ESP32.
+- **ButtonTrigger** – Non-blocking button event handler for Arduino and ESP32.
+- **DHTManager** – Multi-sensor DHT11 and DHT22 manager for Arduino and ESP32.
+- **ServoManager** – Manage one or multiple servo motors with calibration and smooth movement.
 
 ---
 

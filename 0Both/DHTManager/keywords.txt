@@ -1,0 +1,14 @@
+DHTManager	KEYWORD1
+DHTSensor	KEYWORD1
+
+DHTType	KEYWORD1
+DHTReadMode	KEYWORD1
+DHTComfort	KEYWORD1
+
+temperature	KEYWORD2
+humidity	KEYWORD2
+heatIndex	KEYWORD2
+dewPoint	KEYWORD2
+comfort	KEYWORD2
+read	KEYWORD2
+update	KEYWORD2

@@ -39,3 +39,16 @@ void ServoManager::update()
         if (_servos[i])
             _servos[i]->update();
 }
+
+uint8_t ServoManager::count()
+{
+    return _count;
+}
+
+ServoMotor *ServoManager::get(uint8_t index)
+{
+    if (index >= _count)
+        return nullptr;
+
+    return _servos[index];
+}

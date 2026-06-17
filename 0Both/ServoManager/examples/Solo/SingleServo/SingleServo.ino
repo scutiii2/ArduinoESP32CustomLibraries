@@ -1,10 +1,9 @@
 #include <ServoMotor.h>
 
-ServoMotor servo;
+ServoMotor servo(18);
 
 void setup()
 {
-    servo.attach(18);
     servo.write(0);
 }
 
@@ -14,13 +13,10 @@ void loop()
 
     static uint32_t lastMove = 0;
     static bool state = false;
-
     if (millis() - lastMove >= 2000)
     {
         lastMove = millis();
-
         state = !state;
-
         servo.write(state ? 180 : 0);
     }
 }

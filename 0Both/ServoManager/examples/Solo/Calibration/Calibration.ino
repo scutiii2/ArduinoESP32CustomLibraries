@@ -1,6 +1,6 @@
 #include <ServoMotor.h>
 
-ServoMotor servo;
+ServoMotor servo(18);
 
 int pulseWidth = 1500;
 
@@ -22,7 +22,6 @@ void printHelp()
 void moveServo()
 {
     servo.writeMicroseconds(pulseWidth);
-
     Serial.print("Pulse: ");
     Serial.print(pulseWidth);
     Serial.println(" us");
@@ -31,11 +30,7 @@ void moveServo()
 void setup()
 {
     Serial.begin(115200);
-
-    servo.attach(18);
-
     moveServo();
-
     printHelp();
 }
 
@@ -44,10 +39,7 @@ void loop()
     servo.update();
 
     if (!Serial.available())
-    {
         return;
-    }
-
     char cmd = Serial.read();
 
     switch (cmd)

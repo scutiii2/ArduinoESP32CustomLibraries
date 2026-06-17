@@ -3,28 +3,24 @@
 #include <Arduino.h>
 #include "DHTSensor.h"
 
-#define DHTMANAGER_MAX_SENSORS 16
+#define DHT_MAX_COUNT 16
 
 class DHTManager
 {
 public:
-    DHTManager();
+    static bool add(DHTSensor& sensor);
+    static bool remove(DHTSensor& servo);
+    static void update();
 
-    bool add(DHTSensor& sensor);
-
-    void update();
-
-    void setReadMode(DHTReadMode mode);
-    DHTReadMode getReadMode() const;
-
-    uint8_t count() const;
-
-    DHTSensor* get(uint8_t index);
+    static void setReadMode(DHTReadMode mode);
+    static DHTReadMode getReadMode() const;
+    static uint8_t count();
+    static DHTSensor* get(uint8_t index);
 
 private:
-    DHTSensor* _sensors[DHTMANAGER_MAX_SENSORS];
-    uint8_t _count;
+    static DHTSensor* _sensors[DHT_MAX_COUNT];
+    static uint8_t _count;
 
-    DHTReadMode _readMode;
-    uint8_t _scheduledIndex;
+    static DHTReadMode _readMode;
+    static uint8_t _scheduledIndex;
 };

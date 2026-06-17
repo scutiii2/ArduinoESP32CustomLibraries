@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
@@ -16,57 +17,39 @@ enum ServoMoveMode
 class ServoMotor
 {
 public:
-    ServoMotor();
-    ServoMotor(uint8_t pin);
+    // MAIN =============
     ServoMotor(
         uint8_t pin,
-        int minPulse,
-        int maxPulse);
+        int minPulse = SERVO_DEFAULT_MIN_PULSE,
+        int maxPulse = SERVO_DEFAULT_MAX_PULSE,
+        std::optional<int> centerPulse = std::nullopt);
     ~ServoMotor();
+    void update();
 
-    
-    bool attach(uint8_t pin);
-    bool attach(
-        uint8_t pin,
-        int minPulse,
-        int maxPulse);
-
-    void detach();
-
-    bool attached() const;
-
+    // PROCESSORS =============
     void calibrate(
-        int minPulse,
-        int centerPulse,
-        int maxPulse);
-
-    void setUpdateInterval(uint32_t intervalMs);
-
-    void write(int angle);
+        int minPulse = SERVO_DEFAULT_MIN_PULSE,
+        int maxPulse = SERVO_DEFAULT_MAX_PULSE,
+        std::optional<int> centerPulse = std::nullopt);
     void writeMicroseconds(int pulse);
-
+    void write(int angle);
     void moveTo(
         int angle,
         uint32_t duration);
-
     void moveBy(
         int deltaAngle,
         uint32_t duration);
 
+    // GETTERS | SETTERS =============
+    void setUpdateInterval(uint32_t intervalMs);
     void center();
-
-    int read() const;
-    int readMicroseconds() const;
-
+    int readAngle() const;
+    int readPulse() const;
     int getMinPulse() const;
     int getCenterPulse() const;
     int getMaxPulse() const;
-
     uint8_t getPin() const;
-
     bool isMoving() const;
-
-    void update();
 
 private:
     int angleToPulse(int angle) const;
@@ -75,23 +58,18 @@ private:
     Servo _servo;
 
     uint8_t _pin;
-    bool _attached;
-
     int _minPulse;
     int _centerPulse;
     int _maxPulse;
 
     int _currentAngle;
     int _currentPulse;
-
     int _startAngle;
     int _targetAngle;
 
     uint32_t _moveDuration;
     uint32_t _moveStartTime;
-
     uint32_t _updateInterval;
     uint32_t _lastUpdateTime;
-
     bool _moving;
 };

@@ -7,14 +7,6 @@ ServoMotor servo3;
 
 void setup()
 {
-    servo1.attach(18);
-    servo2.attach(19);
-    servo3.attach(21);
-
-    ServoManager::addServo(servo1);
-    ServoManager::addServo(servo2);
-    ServoManager::addServo(servo3);
-
     servo1.write(0);
     servo2.write(90);
     servo3.write(180);

@@ -38,17 +38,15 @@ DHTSensor::DHTSensor(uint8_t pin, DHTType type)
       _tempAboveCallback(nullptr),
       _tempBelowCallback(nullptr),
       _humidityAboveCallback(nullptr),
-      _humidityBelowCallback(nullptr)
-{
-    _interval = (_type == DHT_TYPE_11)
+      _humidityBelowCallback(nullptr),
+      _interval(_type == DHT_TYPE_11
                     ? DHT11_DEFAULT_INTERVAL
-                    : DHT22_DEFAULT_INTERVAL;
-
+                    : DHT22_DEFAULT_INTERVAL)
+{
     memset(
         _tempHistory,
         0,
         sizeof(_tempHistory));
-
     memset(
         _humidityHistory,
         0,
@@ -219,12 +217,12 @@ float DHTSensor::humidityOffset() const
 
 void DHTSensor::setMedianSamples(uint8_t samples)
 {
-    _medianSamples = min(samples, (uint8_t)DHTMANAGER_MAX_FILTER_SAMPLES);
+    _medianSamples = min(samples, (uint8_t)DHT_MAX_FILTER_SAMPLES);
 }
 
 void DHTSensor::setAverageSamples(uint8_t samples)
 {
-    _averageSamples = min(samples, (uint8_t)DHTMANAGER_MAX_FILTER_SAMPLES);
+    _averageSamples = min(samples, (uint8_t)DHT_MAX_FILTER_SAMPLES);
 }
 
 uint8_t DHTSensor::medianSamples() const
@@ -314,12 +312,12 @@ float DHTSensor::applyFiltering(
     float *history,
     uint8_t &historyCount)
 {
-    for (int i = DHTMANAGER_MAX_FILTER_SAMPLES - 1; i > 0; i--)
+    for (int i = DHT_MAX_FILTER_SAMPLES - 1; i > 0; i--)
         history[i] = history[i - 1];
 
     history[0] = value;
 
-    if (historyCount < DHTMANAGER_MAX_FILTER_SAMPLES)
+    if (historyCount < DHT_MAX_FILTER_SAMPLES)
         historyCount++;
 
     uint8_t count = historyCount;
@@ -345,7 +343,7 @@ float DHTSensor::applyFiltering(
 
 float DHTSensor::median(float *values, uint8_t count)
 {
-    float buffer[DHTMANAGER_MAX_FILTER_SAMPLES];
+    float buffer[DHT_MAX_FILTER_SAMPLES];
 
     memcpy(buffer, values, count * sizeof(float));
 

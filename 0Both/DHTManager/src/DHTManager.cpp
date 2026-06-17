@@ -1,29 +1,41 @@
 #include "DHTManager.h"
+#include "DHTSensor.h"
 
-DHTManager::DHTManager()
-    : _count(0),
-      _readMode(DHT_SYNC),
-      _scheduledIndex(0)
-{
-}
+DHTSensor *DHTManager::_sensors[DHT_MAX_COUNT] = {nullptr};
+uint8_t DHTManager::_count = 0;
 
-bool DHTManager::add(DHTSensor& sensor)
+bool DHTManager::add(DHTSensor &sensor)
 {
-    if (_count >= DHTMANAGER_MAX_SENSORS)
+    // slot check
+    if (_count >= DHT_MAX_COUNT)
         return false;
+    for (uint8_t i = 0; i < _count; i++)
+        if (_sensors[i] == &sensor)
+            return false;
 
     _sensors[_count++] = &sensor;
-
     sensor.begin();
+    return true
+}
 
-    return true;
+bool DHTManager::remove(DHTSensor &sensor)
+{
+    for (uint8_t i = 0; i < _count; i++)
+    {
+        if (_sensors[i] != &sensor)
+            continue;
+        for (uint8_t j = i; j < (_count - 1); j++)
+            _sensors[j] = _sensors[j + 1];
+
+        _sensors[_count - 1] = nullptr;
+        _count--;
+        return true;
+    }
+    return false;
 }
 
 void DHTManager::update()
 {
-    if (!_count)
-        return;
-
     if (_readMode == DHT_SYNC)
     {
         for (uint8_t i = 0; i < _count; i++)
@@ -36,8 +48,7 @@ void DHTManager::update()
     {
         for (uint8_t i = 0; i < _count; i++)
         {
-            DHTSensor* sensor = _sensors[_scheduledIndex];
-
+            DHTSensor *sensor = _sensors[_scheduledIndex];
             _scheduledIndex++;
 
             if (_scheduledIndex >= _count)
@@ -62,12 +73,12 @@ DHTReadMode DHTManager::getReadMode() const
     return _readMode;
 }
 
-uint8_t DHTManager::count() const
+uint8_t DHTManager::count()
 {
     return _count;
 }
 
-DHTSensor* DHTManager::get(uint8_t index)
+DHTSensor *DHTManager::get(uint8_t index)
 {
     if (index >= _count)
         return nullptr;

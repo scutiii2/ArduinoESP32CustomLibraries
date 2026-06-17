@@ -11,6 +11,9 @@ public:
     static bool add(ServoMotor& servo);
     static bool remove(ServoMotor& servo);
     static void update();
+    
+    static uint8_t count();
+    static ServoMotor* get(uint8_t index);
 
 private:
     static ServoMotor* _servos[SERVO_MAX_COUNT];

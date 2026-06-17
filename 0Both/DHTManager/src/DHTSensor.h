@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <DHT.h>
 
-#define DHTMANAGER_MAX_FILTER_SAMPLES 10
+#define DHT_MAX_FILTER_SAMPLES 10
 #define DHT11_DEFAULT_INTERVAL 1000UL
 #define DHT22_DEFAULT_INTERVAL 2000UL
 #define DHT_OFFLINE_THRESHOLD 5
@@ -118,8 +118,8 @@ private:
     uint8_t _medianSamples;
     uint8_t _averageSamples;
 
-    float _tempHistory[DHTMANAGER_MAX_FILTER_SAMPLES];
-    float _humidityHistory[DHTMANAGER_MAX_FILTER_SAMPLES];
+    float _tempHistory[DHT_MAX_FILTER_SAMPLES];
+    float _humidityHistory[DHT_MAX_FILTER_SAMPLES];
     uint8_t _tempHistoryCount;
     uint8_t _humidityHistoryCount;
 

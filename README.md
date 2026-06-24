@@ -24,7 +24,7 @@ Here’s the list of libraries currently available in this repository:
 - **ButtonTrigger** – Non-blocking button event handler for Arduino and ESP32.
 - **DHTManager** – Multi-sensor DHT11 and DHT22 manager for Arduino and ESP32.
 - **ServoManager** – Manage one or multiple servo motors with calibration and smooth movement.
-
+- **CommandSocket** – WebSocket bridge for CommandController.
 ---
 
 ## 🛠 Installation

@@ -3,42 +3,38 @@
 #include <CommandSocket.h>
 #include <CommandController.h>
 
-const char* ssid = "YOUR_WIFI";
-const char* password = "YOUR_PASSWORD";
+const char *ssid = "YOUR_WIFI";
+const char *password = "YOUR_PASSWORD";
 
 CommandController controller;
+
 CommandSocket socket;
 
 CommandResult executeCommand(
-    const String& command
-)
-{
-    controller.executeCommand(
-        std::string(command.c_str())
-    );
-
-    return {
-        true,
-        "Executed"
-    };
+  const String &command) {
+  return controller.executeCommand(
+    std::string(command.c_str()));
 }
 
-void setup()
-{
-    Serial.begin(115200);
+void setup() {
+  Serial.begin(115200);
 
-    WiFi.begin(ssid, password);
+  WiFi.begin(
+    ssid,
+    password);
 
-    while (WiFi.status() != WL_CONNECTED)
-    {
-    }
+  while (WiFi.status() != WL_CONNECTED) {
+  }
 
-    Serial.println(WiFi.localIP());
+  Serial.print("IP: ");
+  Serial.println(WiFi.localIP());
 
-    socket.begin(executeCommand);
+  Serial.println(
+    "WebSocket: ws://" + WiFi.localIP().toString() + ":81");
+
+  socket.begin(executeCommand);
 }
 
-void loop()
-{
-    socket.update();
+void loop() {
+  socket.update();
 }

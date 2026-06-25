@@ -2,8 +2,11 @@
 
 CommandHTTP *CommandHTTP::_instance = nullptr;
 
-CommandHTTP::CommandHTTP(uint16_t port)
-    : _server(port)
+CommandHTTP::CommandHTTP(
+    uint16_t port,
+    const String &endpoint)
+    : _server(port),
+      _endpoint(endpoint)
 {
 }
 
@@ -12,22 +15,18 @@ void CommandHTTP::begin(CommandHandler handler)
     _handler = handler;
     _instance = this;
 
-    // Handle POST requests
     _server.on(
-        "/command",
+        _endpoint.c_str(),
         HTTP_POST,
         handleCommandStatic);
 
-    // Handle OPTIONS preflight requests for CORS
     _server.on(
-        "/command",
+        _endpoint.c_str(),
         HTTP_OPTIONS,
         []()
         {
-            _instance->_server.sendHeader("Access-Control-Allow-Origin", "*");
-            _instance->_server.sendHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-            _instance->_server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-            _instance->_server.send(204); // No Content
+            _instance->sendCorsHeaders();
+            _instance->_server.send(204);
         });
 
     _server.on(
@@ -35,10 +34,30 @@ void CommandHTTP::begin(CommandHandler handler)
         HTTP_GET,
         []()
         {
-            _instance->_server.sendHeader("Access-Control-Allow-Origin", "*");
-            _instance->_server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-            _instance->_server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-            _instance->_server.send(200, "text/plain", "OK");
+            _instance->sendCorsHeaders();
+
+            _instance->_server.send(
+                200,
+                "text/plain",
+                "OK");
+        });
+
+    _server.onNotFound(
+        []()
+        {
+            if (_instance->_server.method() == HTTP_OPTIONS)
+            {
+                _instance->sendCorsHeaders();
+                _instance->_server.send(204);
+                return;
+            }
+
+            _instance->sendCorsHeaders();
+
+            _instance->_server.send(
+                404,
+                "text/plain",
+                "ERROR|Not Found");
         });
 
     _server.begin();
@@ -57,49 +76,69 @@ void CommandHTTP::handleCommandStatic()
     }
 }
 
+void CommandHTTP::sendCorsHeaders()
+{
+    _server.sendHeader(
+        "Access-Control-Allow-Origin",
+        "*");
+
+    _server.sendHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, OPTIONS");
+
+    _server.sendHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type");
+}
+
 void CommandHTTP::handleCommand()
 {
+    sendCorsHeaders();
+
     if (!_handler)
     {
-        _server.sendHeader("Access-Control-Allow-Origin", "*");
-        _server.sendHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-        _server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-
         _server.send(
             500,
             "text/plain",
             "ERROR|No handler");
+
         return;
     }
 
-    String command = _server.arg("plain");
+    String command =
+        _server.arg("plain");
+
     command.trim();
 
     if (command.isEmpty())
     {
-        _server.sendHeader("Access-Control-Allow-Origin", "*");
-        _server.sendHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-        _server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
-
         _server.send(
             400,
             "text/plain",
             "ERROR|Empty command");
+
         return;
     }
 
-    CommandResult result = _handler(command);
+    CommandResult result =
+        _handler(command);
 
     String response;
-    response += result.success ? "OK|" : "ERROR|";
-    response += result.message;
 
-    _server.sendHeader("Access-Control-Allow-Origin", "*");
-    _server.sendHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    _server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+    response.reserve(
+        result.message.length() + 8);
+
+    response =
+        result.success
+            ? "OK|"
+            : "ERROR|";
+
+    response += result.message.c_str();
 
     _server.send(
-        result.success ? 200 : 400,
+        result.success
+            ? 200
+            : 400,
         "text/plain",
         response);
 }

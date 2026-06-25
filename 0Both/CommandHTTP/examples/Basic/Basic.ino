@@ -7,35 +7,34 @@ const char *ssid = "YOUR_WIFI";
 const char *password = "YOUR_PASSWORD";
 
 CommandController controller;
+
 CommandHTTP http;
 
 CommandResult executeCommand(
-    const String &command)
-{
-    controller.executeCommand(
-        std::string(command.c_str()));
-
-    return {
-        true,
-        "Executed"};
+  const String &command) {
+  return controller.executeCommand(
+    std::string(command.c_str()));
 }
 
-void setup()
-{
-    Serial.begin(115200);
+void setup() {
+  Serial.begin(115200);
 
-    WiFi.begin(ssid, password);
+  WiFi.begin(
+    ssid,
+    password);
 
-    while (WiFi.status() != WL_CONNECTED)
-    {
-    }
+  while (WiFi.status() != WL_CONNECTED) {
+  }
 
-    Serial.println(WiFi.localIP());
+  Serial.print("IP: ");
+  Serial.println(WiFi.localIP());
 
-    http.begin(executeCommand);
+  Serial.println(
+    "Endpoint: http://" + WiFi.localIP().toString() + ":8080/api/command");
+
+  http.begin(executeCommand);
 }
 
-void loop()
-{
-    http.update();
+void loop() {
+  http.update();
 }

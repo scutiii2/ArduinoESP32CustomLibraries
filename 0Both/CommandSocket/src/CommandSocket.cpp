@@ -1,6 +1,6 @@
 #include "CommandSocket.h"
 
-CommandSocket* CommandSocket::_instance = nullptr;
+CommandSocket *CommandSocket::_instance = nullptr;
 
 CommandSocket::CommandSocket(uint16_t port)
     : _socket(port)
@@ -24,16 +24,14 @@ void CommandSocket::update()
 
 void CommandSocket::send(
     uint8_t clientNum,
-    const String& message
-)
+    const String &message)
 {
     String payload = message;
     _socket.sendTXT(clientNum, payload);
 }
 
 void CommandSocket::broadcast(
-    const String& message
-)
+    const String &message)
 {
     String payload = message;
     _socket.broadcastTXT(payload);
@@ -42,9 +40,8 @@ void CommandSocket::broadcast(
 void CommandSocket::webSocketEvent(
     uint8_t clientNum,
     WStype_t type,
-    uint8_t* payload,
-    size_t length
-)
+    uint8_t *payload,
+    size_t length)
 {
     if (_instance)
     {
@@ -52,17 +49,15 @@ void CommandSocket::webSocketEvent(
             clientNum,
             type,
             payload,
-            length
-        );
+            length);
     }
 }
 
 void CommandSocket::handleEvent(
     uint8_t clientNum,
     WStype_t type,
-    uint8_t* payload,
-    size_t length
-)
+    uint8_t *payload,
+    size_t length)
 {
     if (!_handler)
         return;
@@ -71,15 +66,14 @@ void CommandSocket::handleEvent(
         return;
 
     CommandResult result =
-        _handler((char*)payload);
+        _handler((char *)payload);
 
     String response;
 
     response += result.success ? "OK|" : "ERROR|";
-    response += result.message;
+    response += result.message.c_str();
 
     _socket.sendTXT(
         clientNum,
-        response
-    );
+        response);
 }

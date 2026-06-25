@@ -3,12 +3,13 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebSocketsServer.h>
-#include "CommandResult.h"
+
+#include <Command.h>
 
 class CommandSocket
 {
 public:
-    typedef CommandResult (*CommandHandler)(const String &command);
+    using CommandHandler = CommandResult (*)(const String &command);
 
     CommandSocket(uint16_t port = 81);
 
@@ -22,7 +23,7 @@ private:
     static CommandSocket *_instance;
 
     WebSocketsServer _socket;
-    CommandHandler _handler;
+    CommandHandler _handler = nullptr;
 
     static void webSocketEvent(
         uint8_t clientNum,

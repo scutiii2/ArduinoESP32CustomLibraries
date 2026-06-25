@@ -27,14 +27,16 @@ void CommandSocket::send(
     const String& message
 )
 {
-    _socket.sendTXT(clientNum, message);
+    String payload = message;
+    _socket.sendTXT(clientNum, payload);
 }
 
 void CommandSocket::broadcast(
     const String& message
 )
 {
-    _socket.broadcastTXT(message);
+    String payload = message;
+    _socket.broadcastTXT(payload);
 }
 
 void CommandSocket::webSocketEvent(

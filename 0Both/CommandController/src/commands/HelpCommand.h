@@ -12,5 +12,5 @@ public:
     std::string name() const override;
     std::string description() const override;
     std::vector<std::string> aliases() const override;
-    void execute(const Args &args, const CommandContext &ctx) override;
+    CommandResult execute(const Args &args, const CommandContext &ctx) override;
 };

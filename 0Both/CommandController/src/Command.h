@@ -9,6 +9,22 @@ struct CommandContext
     std::vector<std::string> args;
     std::unordered_map<std::string, std::vector<std::string>> subcommands;
     std::unordered_set<std::string> flags;
+
+    bool hasSubcommand(const std::string &name) const
+    {
+        return subcommands.count(name);
+    }
+
+    bool hasFlag(const std::string &name) const
+    {
+        return flags.count(name);
+    }
+};
+
+struct CommandResult
+{
+    bool success = true;
+    std::string message = "OK";
 };
 
 class Command
@@ -24,5 +40,5 @@ public:
     virtual std::unordered_map<std::string, std::string> subcommandDescriptions() const { return {}; }
     virtual std::unordered_map<std::string, std::string> flagDescriptions() const { return {}; }
 
-    virtual void execute(const Args &args, const CommandContext &ctx) = 0;
+    virtual CommandResult execute(const Args &args, const CommandContext &ctx) = 0;
 };

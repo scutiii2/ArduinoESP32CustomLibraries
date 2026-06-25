@@ -22,6 +22,11 @@ CommandController::~CommandController()
         delete e.cmd;
 }
 
+size_t CommandController::commandCount() const
+{
+    return commands.size();
+}
+
 void CommandController::registerCommand(Command *cmd)
 {
     std::string nameLower = toLower(cmd->name());
@@ -97,11 +102,18 @@ std::vector<std::string> tokenize(const std::string &input)
     return tokens;
 }
 
-void CommandController::executeCommand(const std::string &input)
+CommandResult CommandController::executeCommand(const std::string &input)
 {
+    CommandResult res;
+
     auto tokens = tokenize(input);
+
     if (tokens.empty())
-        return;
+    {
+        res.success = false;
+        res.message = "Token is empty.";
+        return res;
+    }
 
     std::string cmdName = toLower(tokens[0]);
     Command *cmd = nullptr;
@@ -113,19 +125,25 @@ void CommandController::executeCommand(const std::string &input)
             cmd = e.cmd;
             break;
         }
+
         for (auto &a : e.aliasesLower)
+        {
             if (a == cmdName)
             {
                 cmd = e.cmd;
                 break;
             }
+        }
+
         if (cmd)
             break;
     }
+
     if (!cmd)
     {
-        std::cout << "Unknown command: " << tokens[0] << "\n";
-        return;
+        res.success = false;
+        res.message = "Unknown command: " + tokens[0];
+        return res;
     }
 
     CommandContext ctx;
@@ -135,22 +153,29 @@ void CommandController::executeCommand(const std::string &input)
     for (size_t i = 1; i < tokens.size(); i++)
     {
         auto &t = tokens[i];
+
         if (t.rfind("--", 0) == 0)
         {
-            currentSub = t.substr(2);
-            ctx.subcommands[currentSub] = {};
+            currentSub = toLower(t.substr(2));
+
+            if (!ctx.subcommands.count(currentSub))
+                ctx.subcommands[currentSub] = {};
         }
         else if (t.rfind("~", 0) == 0)
         {
-            ctx.flags.insert(t.substr(1));
+            ctx.flags.insert(toLower(t.substr(1)));
         }
         else if (!currentSub.empty())
+        {
             ctx.subcommands[currentSub].push_back(t);
+        }
         else
+        {
             args.push_back(t);
+        }
     }
 
-    cmd->execute(args, ctx);
+    return cmd->execute(args, ctx);
 }
 
 void CommandController::printHelp() const

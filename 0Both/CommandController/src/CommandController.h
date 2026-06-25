@@ -19,8 +19,9 @@ public:
     CommandController();
     ~CommandController();
 
+    size_t commandCount() const;
     void registerCommand(Command *cmd);
     void unregisterCommand(const std::string &name);
-    void executeCommand(const std::string &input);
+    CommandResult executeCommand(const std::string &input);
     void printHelp() const;
 };

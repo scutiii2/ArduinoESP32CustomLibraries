@@ -25,6 +25,7 @@ Here’s the list of libraries currently available in this repository:
 - **DHTManager** – Multi-sensor DHT11 and DHT22 manager for Arduino and ESP32.
 - **ServoManager** – Manage one or multiple servo motors with calibration and smooth movement.
 - **CommandSocket** – WebSocket bridge for CommandController.
+- **CommandHTTP** – HTTP bridge for CommandController.
 ---
 
 ## 🛠 Installation

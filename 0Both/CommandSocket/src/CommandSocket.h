@@ -36,4 +36,5 @@ private:
         WStype_t type,
         uint8_t *payload,
         size_t length);
+    String toJson(const CommandResult &result)
 };

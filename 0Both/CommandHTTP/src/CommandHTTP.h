@@ -28,4 +28,5 @@ private:
 
     void handleCommand();
     void sendCorsHeaders();
+    String toJson(const CommandResult &result);
 };

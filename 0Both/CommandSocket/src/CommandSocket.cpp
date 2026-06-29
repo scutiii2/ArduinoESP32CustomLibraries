@@ -70,10 +70,24 @@ void CommandSocket::handleEvent(
 
     String response;
 
-    response += result.success ? "OK|" : "ERROR|";
-    response += result.message.c_str();
+    String json = toJson(result);
 
     _socket.sendTXT(
         clientNum,
-        response);
+        json);
+}
+
+String CommandSocket::toJson(const CommandResult &result)
+{
+    String json;
+
+    json.reserve(result.message.length() + 40);
+
+    json = "{\"success\":";
+    json += result.success ? "true" : "false";
+    json += ",\"message\":\"";
+    json += result.message.c_str();
+    json += "\"}";
+
+    return json;
 }

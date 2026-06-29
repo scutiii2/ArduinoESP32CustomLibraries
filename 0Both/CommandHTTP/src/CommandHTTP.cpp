@@ -125,20 +125,23 @@ void CommandHTTP::handleCommand()
 
     String response;
 
-    response.reserve(
-        result.message.length() + 8);
-
-    response =
-        result.success
-            ? "OK|"
-            : "ERROR|";
-
-    response += result.message.c_str();
-
     _server.send(
-        result.success
-            ? 200
-            : 400,
-        "text/plain",
-        response);
+        result.success ? 200 : 400,
+        "application/json",
+        toJson(result));
+}
+
+String CommandHTTP::toJson(const CommandResult &result)
+{
+    String json;
+
+    json.reserve(result.message.length() + 40);
+
+    json = "{\"success\":";
+    json += result.success ? "true" : "false";
+    json += ",\"message\":\"";
+    json += result.message.c_str();
+    json += "\"}";
+
+    return json;
 }
